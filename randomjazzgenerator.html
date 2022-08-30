@@ -1,0 +1,84 @@
+<html>
+
+<head>
+
+    <style>
+        body {
+            font-size: 25px;
+        }
+
+    </style>
+    
+    <title>Random Jazz Generator</title>
+
+    <script>
+        function generateList()
+        {
+
+const movesTimeStamps = "0:09 Apple Jack 0:48 Black Bottom 1:11 Boogie Back aka 'Back it up' 1:29 Boogie Forward 1:35 Boogie Forward (clap behind) 1:42 Boogie Step 1:52 Box Step (original) 2:24 Box Step (contemporary) 2:40 Break (Shim Sham) aka 'TOBA break' 3:32 Break (Half break) aka 'Tiger Rag break' 3:57 Break-a-leg 4:20 Cakewalk / Camelwalk (classic) 4:45 Cakewalk / Camelwalk (modern) 5:09 Camelwalk (backward) 5:22 Cartwheel 5:39 Charleston (1920s) 5:53 Charleston (Jump) 6:05 Charleston (Kansas City) 6:18 Charleston (Squat) 6:27 Cool Breeze (1953) aka 'Grapevine' 6:43 Cool Breeze (1970s) 7:07 Crazy Legs 7:29 Crossovers 7:40 Cross step 8:02 Eagle Slide 8:44 Fall off the Log 8:53 Fall off the Log (turning) 9:01 Fishtails 9:09 Gaze Afar 9:16 Grinds 9:44 Hallelujahs aka 'Shouts' 10:18 Heels (Digs) 10:28 Heels (Russian wing) 10:42 Hitchhiker 11:03 Itches 11:09 Jig Walks 11:29 Knee Slaps 11:35 Lockstep 11:44 Lowdown 12:18 Mess Around 12:27 Mooch aka 'Four Corners' 12:51 Opposites aka 'Push n Pull' 13:13 Paddle Turn 13:23 Pecks 14:07 Pecks (Jackson 5) 14:31 Ride the Pony 14:46 Rocks 15:05 Rusty Dusty 15:19 Sailor Kicks 15:35 Savoy Kicks 16:05 Scarecrow 16:11 Scissor Kicks 16:21 Shim Sham 17:01 Shish-ka-boom-ba 17:11 Shoe Shine 17:15 Shorty George 17:23 Skate 17:31 Skip up 17:38 Slip Slops 17:43 Spank the Baby 17:48 Stomp off 17:54 Struttin' 18:07 Suzie Q 18:17 Tabby the Cat 19:05 Tacky Annie 19:15 Tick Tocks 19:23 Truckin' 19:36 Turkey Trots  ";
+
+const movesOffset = movesTimeStamps.split(":");
+let movesArray = [];
+
+const transitionsArray = [ "lock step", "stomp", "triple step", "copter", "Eagle Slide"];
+
+for(let i = 0; i < movesOffset.length - 1; i++) {
+       movesArray.push(movesOffset[i].substring(movesOffset[i].length - 2, movesOffset[i].length).trim() + ":" + movesOffset[i+1].substring(0, movesOffset[i+1].length - 2).trim());
+
+}
+      
+let nbOfMoves = document.getElementById("boxNbOfMoves").value;
+
+const allowRepeat = document.getElementById("boxAllowRepeats").checked;
+
+const movesList = [];
+let moveIndex = -1;
+let strMoves = "";
+
+//avoiding a situation where there are no repeats AND more desired moves than actually are in the array. Otherwise it will get stuck in a loop at the while. As a result, this will basically rearrange the full list in a random order.
+if ((!allowRepeat) && (nbOfMoves > movesArray.length)) {
+    nbOfMoves = movesArray.length;
+}
+    
+document.getElementById("listOfMoves").innerHTML = nbOfMoves + " moves to try!";
+document.getElementById("listOfMoves").innerHTML = document.getElementById("listOfMoves").innerHTML + "<br>-----------------------";
+let timeStamp = "";
+let movesName = "";
+
+
+for (let i = 0; i<nbOfMoves; i++) {
+    moveIndex = Math.floor(Math.random() * movesArray.length);
+    
+    if (!allowRepeat) {
+        while(movesList.indexOf(moveIndex) >= 0) {
+            moveIndex = Math.floor(Math.random() * movesArray.length);
+        }
+        movesList.push(moveIndex);
+    }
+    
+    timeStamp = movesArray[moveIndex].substring(0, movesArray[moveIndex].indexOf(" ")). split(":");
+    moveName = movesArray[moveIndex].substring(movesArray[moveIndex].indexOf(" "), movesArray[moveIndex].length);
+
+    if ((document.getElementById("boxTransitions").checked) && i != 0) {
+        transitionIndex = Math.floor(Math.random() * transitionsArray.length);
+        strMoves = strMoves + "\xa0\xa0\xa0\xa0" + transitionsArray[transitionIndex] + "<br>";
+
+    }
+       
+
+    strMoves = strMoves + "<a href='https://www.youtube.com/watch?v=jAIwJd2tQo0&t=" + timeStamp[0] + "m" + timeStamp[1] + "s'" + " target='_blank'>" + moveName + "</a><br>";
+}
+            document.getElementById("listOfMoves").innerHTML = strMoves;
+        }
+
+    </script>
+</head>
+
+<p style="font-size: 15px;">The moves list is based on the <a href="https://www.youtube.com/watch?v=jAIwJd2tQo0" target="_blank">Alphabetical Jazz Steps List</a> from Chester Whitmore, courtesy of Swingin' at the Savoy. Clicking on the move will get you to the part of the video showcasing the move!</p>
+
+Number of Moves: <input type="text" name="boxNbOfMoves" id="boxNbOfMoves" value="4" onkeypress="return event.key == 'Enter' ? generateList() : !isNaN(event.key)"> <input type="checkbox" name="boxAllowRepeats" id="boxAllowRepeats" checked> Allow Repeats <input type="checkbox" name="boxTransitions" id="boxTransitions"> Provide Transitions<br><br>
+<button name="buttonGenerate" onClick="generateList();" style="font-size: 25px;">Generate!</button>
+
+<p id="listOfMoves"></p>
+
+</html>
